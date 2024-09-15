@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loadMoreBtn {
+  margin-top: 10px;
+  /* width: 100px; */
+}

@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.text {
+  font-size: 18px;
+}
+
+.error {
+  font-size: 18px;
+  font-weight: 600;
+}

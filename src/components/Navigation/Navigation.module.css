@@ -1,0 +1,60 @@
+.header {
+  display: flex;
+  align-items: center;
+  padding: 20px 20px;
+/*   margin-bottom: 16px;
+  box-shadow: 0px 0px 10px 10px gray; */
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
+}
+
+.link {
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+  color: black;
+  font-weight: 500;
+  font-size: 30px;
+  transition: border-bottom 250ms linear, color 250ms linear
+}
+
+.link:hover,
+.link:focus {
+  border-bottom: 2px solid currentColor;
+  color: orangered;
+}
+
+.active {
+  color: orangered;
+}
+
+.scrollBtn {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background-color: orangered;
+}
+
+.reactIcon {
+  position: fixed;
+  color: black;
+  width: 30px;
+  height: 30px;
+
+  transition: color 250ms linear;
+}
+
+.scrollBtn:hover .reactIcon,
+.scrollBtn:focus .reactIcon {
+  color: white;
+}

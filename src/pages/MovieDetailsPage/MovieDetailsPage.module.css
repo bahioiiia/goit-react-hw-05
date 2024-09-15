@@ -1,0 +1,84 @@
+.btnBack {
+  margin-bottom: 10px;
+}
+
+.container {
+  padding: 20px;
+}
+
+.wrapper {
+  display: flex;
+  gap: 20px;
+}
+
+.info {
+  padding-top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.title {
+  font-size: 30px;
+}
+
+.subTitle {
+  font-size: 20px;
+}
+
+.text {
+  font-size: 18px;
+}
+
+.addInfo {
+  margin: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* .addInfoLink {
+  font-size: 18px;
+  color: currentColor;
+  transition: color 250ms linear;
+}
+
+.addInfoLink:hover,
+.addInfoLink:focus {
+  color: orangered;
+} */
+
+.empty {
+  width: 300px;
+  height: 450px;
+  background-color: gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.icon {
+  width: 100%;
+  height: auto;
+}
+
+.error {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.link {
+  font-size: 18px;
+  color: currentColor;
+  transition: color 250ms linear;
+}
+
+.link:hover,
+.link:focus {
+  color: orangered;
+}
+
+.active {
+  color: orangered;
+}

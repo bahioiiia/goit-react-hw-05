@@ -1,0 +1,52 @@
+.container {
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wrapper {
+  border: 2px solid black;
+  padding: 5px;
+
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 calc((100% - 40px) / 5);
+  max-width: calc((100% - 40px) / 5);
+}
+
+.item {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column
+}
+
+.img {
+  height: 250px;
+}
+
+.title {
+  height: 50px;
+  white-space: nowrap;
+  padding: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: currentColor;
+  transition: color 250ms linear;
+}
+
+.wrapper:hover .title,
+.wrapper:focus .title {
+  color: orangered;
+}
+
+.empty {
+  height: 250px;
+  background-color: gray;
+}
+
+.icon {
+  width: 100%;
+  height: 100%;
+}
