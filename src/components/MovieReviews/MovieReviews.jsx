@@ -1,63 +1,43 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Loader from "../Loader/Loader";
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import { fetchMovieReviews } from "../../fetchTMDB";
+import { getReviewMovie } from "../Api/ReviewsMovie";
+import { useEffect, useState } from "react";
+import Loader from "../../components/Loader/Loader";
+import Error from "../../components/Error/Error";
 import css from "./MovieReviews.module.css";
 
-const MovieReviews = () => {
-  const { movieId } = useParams();
+export default function MovieReviews() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const { movieId } = useParams();
 
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    const getReviews = async () => {
+    async function fetchData() {
+      setLoading(true);
       try {
-        setLoading(true);
-        setError(false);
-        const movieReviews = await fetchMovieReviews(movieId, { signal });
-        setReviews(movieReviews);
-      } catch (error) {
-        if (error.name !== "AbortError") {
-          setError(true);
-        }
+        const response = await getReviewMovie(movieId);
+        setReviews(response);
+      } catch {
+        setError(true);
       } finally {
         setLoading(false);
       }
-    };
-
-    getReviews();
-
-    return () => {
-      controller.abort();
-    };
+    }
+    fetchData();
   }, [movieId]);
 
-  if (loading) return <Loader />;
-  if (error) return <ErrorMessage />;
-
   return (
-    <div>
-      {reviews.length > 0 ? (
-        <ul className={css.container}>
-          {reviews.map((review) => (
-            <li key={review.id}>
-              <p>
-                <strong className={css.text}>{review.author}</strong>
-              </p>
-              <p className={css.text}>{review.content}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className={css.error}>We don't have any reviews for this movie!</p>
-      )}
-    </div>
+    <>
+      {loading && <Loader />}
+      {error && <Error />}
+      <ul className={css.list}>
+        {reviews.map((review) => (
+          <li key={review.id}>
+            <p>Author: {review.author}</p>
+            <p>{review.content}</p>
+          </li>
+        ))}
+      </ul>
+    </>
   );
-};
-
-export default MovieReviews;
+}

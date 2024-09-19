@@ -1,49 +1,36 @@
 import { useEffect, useState } from "react";
-import MovieList from "../../components/MovieList/MovieList";
+import { getTrendMovies } from "../../components/Api/TrendMovies";
+import Error from "../../components/Error/Error";
 import Loader from "../../components/Loader/Loader";
-import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
-import { fetchTrendingMovies } from "../../fetchTMDB";
-import css from "./HomePage.module.css";
+import MovieList from "../../components/MovieList/MovieList";
 
-const HomePage = () => {
+export default function HomePage() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    const fetchMovies = async () => {
+    async function fetchData() {
+      setLoading(true);
       try {
-        setError(false);
-        setLoading(true);
-        const trendingMovies = await fetchTrendingMovies({ signal });
-        setMovies(trendingMovies);
-      } catch (error) {
-        if (error.name !== "AbortError") {
-          setError(true);
-        }
+        const data = await getTrendMovies();
+        setMovies(data);
+      } catch {
+        setError(true);
       } finally {
         setLoading(false);
       }
-    };
+    }
 
-    fetchMovies();
-
-    return () => {
-      controller.abort();
-    };
+    fetchData();
   }, []);
 
-  if (loading) return <Loader />;
-  if (error) return <ErrorMessage />;
-
   return (
-    <main>
-      <h1 className={css.title}>Trending today</h1>
+    <>
+      <h1>Tranding today</h1>
+      {loading && <Loader />}
+      {error && <Error />}
       <MovieList movies={movies} />
-    </main>
+    </>
   );
-};
-export default HomePage;
+}

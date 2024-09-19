@@ -1,130 +1,77 @@
-import { useRef, useState, useEffect, Suspense } from "react";
-import {
-  useParams,
-  useNavigate,
-  useLocation,
-  Outlet,
-  NavLink,
-} from "react-router-dom";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { getDetailsMovie } from "../../components/Api/DetailsMovie";
 import Loader from "../../components/Loader/Loader";
-import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
-import { fetchMovieDetails } from "../../fetchTMDB";
-import { BiSolidCameraMovie } from "react-icons/bi";
-import clsx from "clsx";
+import Error from "../../components/Loader/Loader";
 import css from "./MovieDetailsPage.module.css";
 
-const buildLinkClass = ({ isActive }) => {
-  return clsx(css.link, isActive && css.active);
-};
-
-const MovieDetailsPage = () => {
+export default function MovieDetailsPage() {
   const { movieId } = useParams();
   const [movie, setMovie] = useState(null);
-  const navigate = useNavigate();
-  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const backLinkHref = useRef(location.state ?? "/movies");
-
-  const onClickBack = () => navigate(backLinkHref.current);
+  const location = useLocation();
+  const backLinkRef = useRef(location.state ?? "/movies");
 
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    const getMovie = async () => {
+    async function fetchData() {
+      setLoading(true);
       try {
-        setLoading(true);
-        setError(false);
-        setMovie(null);
-        const movieDetails = await fetchMovieDetails(movieId, { signal });
-        setMovie(movieDetails);
-      } catch (error) {
-        if (error.name !== "AbortError") {
-          setError(true);
-        }
+        const data = await getDetailsMovie(movieId);
+        setMovie(data);
+      } catch {
+        setError(true);
       } finally {
         setLoading(false);
       }
-    };
+    }
 
-    getMovie();
-
-    return () => {
-      controller.abort();
-    };
+    fetchData();
   }, [movieId]);
 
-  if (!movie) {
-    return <Loader />;
-  }
-
-  const { title, release_date, poster_path, vote_average, overview, genres } =
-    movie;
-  const releaseYear = new Date(release_date).getFullYear() || "-";
-  const titleWithYear = `${title} (${releaseYear})`;
-
   return (
-    <main className={css.container}>
-      <button onClick={onClickBack} className={css.btnBack}>
-        Go back
-      </button>
-
-      <div className={css.wrapper}>
-        {poster_path ? (
-          <img
-            src={`https://image.tmdb.org/t/p/w300/${poster_path}`}
-            alt={title}
-          />
-        ) : (
-          <div className={css.empty}>
-            <BiSolidCameraMovie className={css.icon} />
-          </div>
-        )}
-        <div className={css.info}>
-          <h1 className={css.title}>{titleWithYear}</h1>
-          <p className={css.text}>
-            User Score: {Math.round(vote_average * 10)}%
-          </p>
-          <h2 className={css.subTitle}>Overview</h2>
-          <p className={css.text}>{overview}</p>
-          <h2 className={css.subTitle}>Genres</h2>
-          {genres.length > 0 ? (
-            <p className={css.text}>
-              {genres.map((genre) => genre.name).join(" ")}
-            </p>
-          ) : (
-            <p className={css.text}>
-              We don't have a genre list for this movie!
-            </p>
-          )}
-        </div>
-      </div>
+    <>
       {loading && <Loader />}
-      {error && <ErrorMessage />}
-      <hr />
-
-      <p className={css.text}>Additional information</p>
-
-      <ul className={css.addInfo}>
-        <li className={css.addInfoLink}>
-          <NavLink to="cast" className={buildLinkClass}>
-            Cast
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="reviews" className={buildLinkClass}>
-            Reviews
-          </NavLink>
-        </li>
-      </ul>
-      <hr />
-      <Suspense fallback={<Loader />}>
-        <Outlet />
-      </Suspense>
-    </main>
+      {error && <Error />}
+      <Link to={backLinkRef.current}>Go back</Link>
+      {movie && (
+        <div className={css.container}>
+          <div className={css.imgwrap}>
+            <img
+              src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
+              alt={movie.title}
+              width="300px"
+            />
+          </div>
+          <div className={css.textwrap}>
+            <h1>{movie.title}</h1>
+            <h2>Overview</h2>
+            <p>{movie.overview}</p>
+            <h2>Genres</h2>
+            <ul className={css.list}>
+              {movie.genres.map((genre) => (
+                <li key={genre.id}>
+                  <p>{genre.name}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <h2>Additional information</h2>
+          <ul className={css.list}>
+            <li>
+              <NavLink to="cast">Cast</NavLink>
+            </li>
+            <li>
+              <NavLink to="reviews">Reviews</NavLink>
+            </li>
+          </ul>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Outlet />
+          </Suspense>
+        </div>
+      )}
+    </>
   );
-};
-
-export default MovieDetailsPage;
+}
