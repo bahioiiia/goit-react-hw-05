@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { getDetailsMovie } from "../../components/Api/DetailsMovie";
 import Loader from "../../components/Loader/Loader";
-import Error from "../../components/Loader/Loader";
+import Error from "../../components/Error/Error";
 import css from "./MovieDetailsPage.module.css";
 
 export default function MovieDetailsPage() {
